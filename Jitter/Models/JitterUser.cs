@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Jitter.Models
 {
-    public class JitterUser
+    public class JitterUser : IComparable
     {
         [Key]
         public int JitterUserId { get; set; }
@@ -28,5 +28,15 @@ namespace Jitter.Models
         public List<Jot> Jots { get; set; }
         public List<JitterUser> Following { get; set; }
         //public List<JitterUser> Followers { get; set; } // Again, this is just one way to do this. Not the only way.
+
+        public int CompareTo(object obj)
+        {
+            // Lets sort user based on their Handles b/c handles are strings AND...
+            // .NET knows how to compare strings already.
+            // We need to explicitely cast from the object type to the JitterUser type
+            JitterUser other_user = obj as JitterUser;
+            int answer = this.Handle.CompareTo(other_user.Handle);
+            return answer;
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Jitter.Tests.Models
 {
     [TestClass]
-    public class JitterUserTests
+    public class JitterUserTests 
     {
         [TestMethod]
         public void JitterUserEnsureICanCreateInstance()
@@ -66,5 +66,7 @@ namespace Jitter.Tests.Models
             // Assert
             CollectionAssert.AreEqual(list_of_users, actual_users);
         }
+
+       
     }
 }
