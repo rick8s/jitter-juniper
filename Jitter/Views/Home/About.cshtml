@@ -5,3 +5,17 @@
 <h3>@ViewBag.Message</h3>
 
 <p>Use this area to provide additional information.</p>
+
+<ul>
+    @foreach (var item in Model)
+    {
+    <li>@item</li>
+    }
+</ul>
+
+@*<ul>
+    @foreach (var item in ViewBag.SomeData as IEnumerable<string>)
+    {
+        <li>@item</li>
+    }
+</ul>*@
