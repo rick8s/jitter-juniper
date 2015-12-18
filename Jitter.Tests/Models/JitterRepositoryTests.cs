@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Moq;
 using System.Data.Entity;
 using System.Linq;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Jitter.Tests.Models
 {
@@ -15,6 +17,7 @@ namespace Jitter.Tests.Models
         private Mock<DbSet<JitterUser>> mock_set;
         private Mock<DbSet<Jot>> mock_jot_set;
         private JitterRepository repository;
+        private ApplicationUser test_user;
 
         private void ConnectMocksToDataStore(IEnumerable<JitterUser> data_store)
         {
@@ -51,6 +54,7 @@ namespace Jitter.Tests.Models
             mock_set = new Mock<DbSet<JitterUser>>();
             mock_jot_set = new Mock<DbSet<Jot>>();
             repository = new JitterRepository(mock_context.Object);
+            test_user = new ApplicationUser { Email = "test@example.com" };// Won't autocomplete because we are missing a using
         }
 
         [TestCleanup]
@@ -267,7 +271,7 @@ namespace Jitter.Tests.Models
 
             ConnectMocksToDataStore(expected);
             // Act
-            string search_term = "sand";
+            string search_term = "a";
             List<JitterUser> expected_users = new List<JitterUser>
             {
                 new JitterUser { Handle = "adam1", FirstName = "Adam", LastName = "Sandler" },
@@ -328,5 +332,25 @@ namespace Jitter.Tests.Models
             //Assert.IsTrue(successful);
         }
 
+        [TestMethod]
+        public void JitterRepositoryEnsureICanCreateAJitterUser()
+        {
+            // Arrange
+            DateTime base_time = DateTime.Now;
+            List<JitterUser> jitter_user_data_source = new List<JitterUser>(); // This is our database
+            ConnectMocksToDataStore(jitter_user_data_source);
+            //string user_id = User.Identity.GetUserId();
+
+            string user_handle = "adam1";
+            //Forces DbSet.Add to behave like List.Add
+            mock_set.Setup(j => j.Add(It.IsAny<JitterUser>())).Callback((JitterUser s) => jitter_user_data_source.Add(s));
+            // Act
+            bool successful = repository.CreateJitterUser(test_user, user_handle);
+
+            // Assert
+            Assert.AreEqual(1, repository.GetAllUsers().Count);
+            // Should this return true?
+            //Assert.IsTrue(successful);
+        }
     }
 }

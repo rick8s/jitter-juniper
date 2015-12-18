@@ -122,5 +122,30 @@ namespace Jitter.Models
             }
             return is_added;
         }
+
+        public bool CreateJitterUser(ApplicationUser app_user, string new_handle)
+        {
+            //Jot a_jot = new Jot { Content = content, Date = DateTime.Now, Author = jitter_user1 };
+            JitterUser new_user = new JitterUser { RealUser = app_user, Handle = new_handle };
+            bool is_added = true;
+            try
+            {
+                //Jot added_jot = _context.Jots.Add(a_jot);
+                JitterUser added_user = _context.JitterUsers.Add(new_user);
+                _context.SaveChanges();
+                // Why is this null? Are the Docs inaccurate?
+                /*
+                if (added_jot == null)
+                {
+                    is_added = false;
+                }*/
+            }
+            catch (Exception)
+            {
+                is_added = false;
+            }
+            return is_added;
+        }
+
     }
 }
